@@ -9,6 +9,8 @@ const booktype = new mongoose.Types({
     publication: { type: string && number, required :true},
     Acknowledgement : {type: string, required : true},
     ISBN : {type : number, required : true},
+    summary : string,
+    avaialiabilty : {type : string, enum : ["available", "checked out"], default : "avialable" },
     edition : {type : number, required : true}
     
 });
