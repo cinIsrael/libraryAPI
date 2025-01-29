@@ -24,7 +24,7 @@ const {PositiveRes , NegativeRes} = require("./utils/responseHandler");
 
         //Section for a single book
 
-        export default async (req, res) => { //note this line 
+        exports.addBook = async (req, res) => {
             try{
                 const book = await Book.SearchById(req.params.id);
                 if(!book) 
