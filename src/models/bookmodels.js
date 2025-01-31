@@ -1,18 +1,16 @@
-const { string } = require("joi");
 const mongoose = require("mongoose");
 
-const booktype = new mongoose.Types({
-    Name : {type : string, required : true},
-    Author : {type : string, required : true},
-    barcode : {type: number, required : true},
-    foreword : { type : string, required : true || false},
-    publication: { type: string && number, required :true},
-    Acknowledgement : {type: string, required : true},
-    ISBN : {type : number, required : true},
-    summary : string,
-    avaialiabilty : {type : string, enum : ["available", "checked out"], default : "avialable" },
-    edition : {type : number, required : true}
-    
+const bookSchema = new mongoose.Schema({
+    Name: { type: String, required: true }, 
+    Author: { type: String, required: true }, 
+    barcode: { type: Number, required: true },  
+    foreword: { type: String, required: false },  
+    publication: { type: Number, required: true }, 
+    Acknowledgement: { type: String, required: true },  
+    ISBN: { type: Number, required: true },  
+    summary: { type: String },  // 
+    availability: { type: String, enum: ["available", "checked out"], default: "available" }, 
+    edition: { type: Number, required: true } 
 });
 
-export default mongoose.model("Book", booktype);
+module.exports = mongoose.model("Book", bookSchema);

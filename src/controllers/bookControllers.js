@@ -1,4 +1,4 @@
-const Book = require("./models/bookModels");
+const Book = require("../models/bookmodels");
 const {PositiveRes , NegativeRes} = require("./utils/responseHandler");
  
     //Section for all books with Pagination
@@ -51,7 +51,7 @@ const {PositiveRes , NegativeRes} = require("./utils/responseHandler");
             }
         };
 
-        //Section for UPDATING a book
+        //Section for UPDATING a book 
 
         exports.updateBook = async (req, res) => {
             try {
