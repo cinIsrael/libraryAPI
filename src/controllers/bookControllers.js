@@ -1,82 +1,92 @@
-const Book = require("../models/bookmodels");
-const {PositiveRes , NegativeRes} = require("./utils/responseHandler");
- 
-    //Section for all books with Pagination
+const Book = require('../models/bookmodels'); // Ensure correct path
+const { PositiveRes, NegativeRes } = require('../utils/responseHandler'); // Import response handlers
 
-     exports.getBooks = async (req, res) => {
-        try{
-            let {page =0, limit = 10} = req.query;
-            page = parseInt(page);
-            limit = parseInt(limit);
+                // Get Books
+exports.getBooks = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
 
-            const books = await Book.find()
-            .skip((page-1) *limit)
-            .limit(limit);
+        const books = await Book.find().skip(skip).limit(limit);
+        const total = await Book.countDocuments();
 
-        const Total = await Book.countFiles();
+        res.status(200).json(PositiveRes("Books retrieved successfully", {
+            books,
+            pagination: {
+                current_page: page,
+                per_page: limit,
+                total_pages: Math.ceil(total / limit),
+                total_books: total
+            }
+        }));
+    } catch (error) {
+        res.status(500).json(NegativeRes("Error fetching books", error.message));
+    }
+};
 
-    res.status(200).json(PositiveRes("books retrieved successfully", {books, Total, page, limit}));
-
-        } catch (error) {
-            res.status(500).json(NegativeRes("Error locatiing books", error));
+                // Search Book
+exports.SearchBookById = async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id);
+        if (!book) {
+            return res.status(404).json(NegativeRes("Book not found"));
         }
-     };
+        res.status(200).json(PositiveRes("Book retrieved successfully", book));
+    } catch (error) {
+        res.status(500).json(NegativeRes("Error fetching book", error.message));
+    }
+};
 
-        //Section for a single book
+            // add Book
+exports.addBook = async (req, res) => {
+    try {
+        const { title, author, genre, publication_date, ISBN, summary, edition } = req.body;
 
-        exports.addBook = async (req, res) => {
-            try{
-                const book = await Book.SearchById(req.params.id);
-                if(!book) 
-                    return res.status(404).json(NegativeRes("Book not found"));
-                else
-                res.status(200).json(PossitiveRes("Book retreived Succesfully", {books}));
+        if (!title || !author || !genre || !publication_date || !ISBN || !edition) {
+            return res.status(400).json(NegativeRes("Missing required fields"));
+        }
 
-            } catch (error){
-                res.status(500).json(NegativeRes("book cannot be retrieved at the moment", error));
+        const newBook = new Book({
+            title,
+            author,
+            genre,
+            publication_date,
+            ISBN,
+            summary,
+            edition,
+            availability: "available"
+        });
 
-            }
-        };
+        await newBook.save();
+        res.status(201).json(PositiveRes("Book added successfully", newBook));
+    } catch (error) {
+        res.status(500).json(NegativeRes("Error adding book", error.message));
+    }
+};
 
-        //Section for ADDING new book to the shelf
+                //Update Book
+exports.updateBook = async (req, res) => {
+    try {
+        const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedBook) {
+            return res.status(404).json(NegativeRes("Book not found"));
+        }
+        res.status(200).json(PositiveRes("Book updated successfully", updatedBook));
+    } catch (error) {
+        res.status(500).json(NegativeRes("Error updating book", error.message));
+    }
+};
 
-        exports.addBook = async (req, res) => {
-            try{
-                let newBook = new Book(req.body);
-                await newBook.save();
-                res.status(204).json(PositiveRes("Shelf updated with new book", {newBook}));
-
-            } catch (error) {
-                res.status(400).json(NegativeRes("Book cannot be added at the moment", error));
-            }
-        };
-
-        //Section for UPDATING a book 
-
-        exports.updateBook = async (req, res) => {
-            try {
-                const updatedBook = await Book.SearchByIdandUpdate(req.params.id, req.body, {new: true,});
-                if(!updatedBook) 
-                    return res.status(404).json(NegativeRes("Nothing to update at this time"));
-                else
-                    return res.status(200).json(PositiveRes("update successful", {updatedBook}));
-
-            } catch (error){
-                res.status(500).json(NegativeRes("update failed", error));
-            }
-        };
-
-        //Section for DELETING a book
-
-        exports.removeBook = async(req, res) => {
-            try{
-                const removeBook = await Book.SearchByIdandRemove(req.params.id);
-                if(!removeBook) 
-                    return res.status(404).json(NegativeRes("No Books to delete at the mooment"));
-                else
-                    return res.status(200).json(PositiveRes("Book Removed"));
-
-            } catch (error){
-                res.status(500).json(NegativeRes("Book cannot be removed at the moment", error));
-            }
-        };
+                       // Remove Book
+exports.removeBook = async (req, res) => {
+    try {
+        const deletedBook = await Book.findByIdAndDelete(req.params.id);
+        if (!deletedBook) {
+            return res.status(404).json(NegativeRes("Book not found"));
+        }
+        res.status(200).json(PositiveRes("Book deleted successfully"));
+    } catch (error) {
+        res.status(500).json(NegativeRes("Error deleting book", error.message));
+    }
+};

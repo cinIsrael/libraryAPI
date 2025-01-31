@@ -9,6 +9,6 @@ exports.NegativeRes = (message, error = null) => ({
     status : "error",
     code : 400,
     message,
-    errors : error ? {details: error.messgae || error
+    errors : error ? {details: error.message || error
      } : null
 });
