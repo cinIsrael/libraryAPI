@@ -1,7 +1,7 @@
-require("dotenv").config(); // Load environment variables
+require("dotenv").config(); 
 const mongoose = require("mongoose");
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/libraryDB"; // Use local DB if not set
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/libraryDB"; 
 
 const connectDB = async () => {
     try {
@@ -11,7 +11,7 @@ const connectDB = async () => {
         console.log(" MongoDB Connected Successfully");
     } catch (error) {
         console.error(" Connection Failed:", error.message);
-        process.exit(1); // Exit if connection fails
+        process.exit(1); 
     }
 };
 
