@@ -1,11 +1,11 @@
-let rateLimiter = require("express.-price-limit");
+let rateLimiter = require("express-rate-limit");
 let limiter = rateLimiter({
-    OpeartingSystem : 100 *600,
-    max :150,
-    message :{
+    windowMs: 100 * 600, 
+    max: 150, 
+    message: {
         status: "error",
-        code : 301,
-        message : "So much failed requests!",
+        code: 429, 
+        message: "Too many failed requests!",
     },
     headers: true,
 });

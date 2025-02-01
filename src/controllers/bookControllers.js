@@ -1,7 +1,7 @@
-const Book = require('../models/bookmodels'); // Ensure correct path
-const { PositiveRes, NegativeRes } = require('../utils/responseHandler'); // Import response handlers
+const Book = require("../models/bookmodels");
+const { PositiveRes, NegativeRes } = require("../utils/responseHandler");
 
-                // Get Books
+// Get All Books with Pagination
 exports.getBooks = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -25,8 +25,8 @@ exports.getBooks = async (req, res) => {
     }
 };
 
-                // Search Book
-exports.SearchBookById = async (req, res) => {
+// Get a Book by ID
+exports.getBookById = async (req, res) => {
     try {
         const book = await Book.findById(req.params.id);
         if (!book) {
@@ -38,7 +38,7 @@ exports.SearchBookById = async (req, res) => {
     }
 };
 
-            // add Book
+// Add a New Book
 exports.addBook = async (req, res) => {
     try {
         const { title, author, genre, publication_date, ISBN, summary, edition } = req.body;
@@ -65,7 +65,7 @@ exports.addBook = async (req, res) => {
     }
 };
 
-                //Update Book
+// Update a Book
 exports.updateBook = async (req, res) => {
     try {
         const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -78,7 +78,7 @@ exports.updateBook = async (req, res) => {
     }
 };
 
-                       // Remove Book
+// Remove a Book
 exports.removeBook = async (req, res) => {
     try {
         const deletedBook = await Book.findByIdAndDelete(req.params.id);
